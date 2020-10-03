@@ -210,6 +210,7 @@ public class Application {
        long wIDcta;
        int resp;
        DAO dao = new DAO();
+       System.out.println("ID DE LA CUENTA: ");
        wIDcta=utilidades.Utilidades.leerLong();
        Cuenta cta = dao.getCuenta(wIDcta);
        System.out.println("--CUENTA ENCONTRADA-- ");

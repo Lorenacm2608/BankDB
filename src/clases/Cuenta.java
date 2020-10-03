@@ -5,7 +5,10 @@
  */
 package clases;
 
+import java.io.Serializable;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -15,16 +18,16 @@ import java.time.LocalDate;
  * @author Moroni
  * 
  */
-public class Cuenta {
+public class Cuenta implements Serializable {
     
     private long id_cta;
     private String descripcion_cta;
     private double balance_cta;
     private double linea_cred_cta;
-    private LocalDate duracion;
+    private Timestamp duracion;
     private double equilibrio_cta;
 
-    public Cuenta(long id_cta, String descripcion_cta, double balance_cta, double linea_cred_cta, LocalDate duracion, double equilibrio_cta) {
+    public Cuenta(long id_cta, String descripcion_cta, double balance_cta, double linea_cred_cta, Timestamp duracion, double equilibrio_cta) {
         this.id_cta = id_cta;
         this.descripcion_cta = descripcion_cta;
         this.balance_cta = balance_cta;
@@ -45,8 +48,10 @@ public class Cuenta {
          balance_cta=utilidades.Utilidades.leerDouble();
          System.out.println("LINEA DE CREDITO: ");
          linea_cred_cta=utilidades.Utilidades.leerDouble();
-         System.out.println("DURACION: ");
-         duracion=utilidades.Utilidades.leerFecha("mm-dd-aaaa");
+         //DURACION
+         LocalDateTime now = LocalDateTime.now();
+         Timestamp timestamp =  Timestamp.valueOf(now);
+         duracion=timestamp;
          System.out.println("EQUILIBRIO: ");
          equilibrio_cta=utilidades.Utilidades.leerDouble();
      }
@@ -84,11 +89,11 @@ public class Cuenta {
         this.linea_cred_cta = linea_cred_cta;
     }
 
-    public LocalDate getDuracion() {
+    public Timestamp getDuracion() {
         return duracion;
     }
 
-    public void setDuracion(LocalDate duracion) {
+    public void setDuracion(Timestamp duracion) {
         this.duracion = duracion;
     }
 

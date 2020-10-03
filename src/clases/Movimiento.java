@@ -5,7 +5,10 @@
  */
 package clases;
 
+import java.io.Serializable;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 /**
  *
  * @author Fredy Vargas
@@ -14,16 +17,16 @@ import java.time.LocalDate;
  * @author Moroni
  * 
  */
-public class Movimiento {
+public class Movimiento implements Serializable{
     
     private long id_mov;
     private double cantidad_mov;
-    private LocalDate duracion_mov;
+    private Timestamp duracion_mov;
     private double balance_mov;
     private String descripcion_mov;
     private long id_cta;
 
-    public Movimiento(long id_mov, double cantidad_mov, LocalDate duracion_mov, double balance_mov, String descripcion_mov, long id_cta) {
+    public Movimiento(long id_mov, double cantidad_mov, Timestamp duracion_mov, double balance_mov, String descripcion_mov, long id_cta) {
         this.id_mov = id_mov;
         this.cantidad_mov = cantidad_mov;
         this.duracion_mov = duracion_mov;
@@ -37,12 +40,12 @@ public class Movimiento {
     }
 
     public void setDatos(){
-        System.out.println("ID: " + id_mov);
-        System.out.println("ID CUENTA:  " + id_cta);
         System.out.println("CANTIDAD: ");
         cantidad_mov=utilidades.Utilidades.leerDouble();
-        System.out.println("DURACION: ");
-        duracion_mov=utilidades.Utilidades.leerFecha("mm-dd-aaaa");
+        //DURACION
+        LocalDateTime now = LocalDateTime.now();
+        Timestamp timestamp =  Timestamp.valueOf(now);
+        duracion_mov=timestamp;
         System.out.println("BALANCE: ");
         balance_mov=utilidades.Utilidades.leerDouble();
         System.out.println("DESCRIPCION: ");
@@ -64,11 +67,11 @@ public class Movimiento {
         this.cantidad_mov = cantidad_mov;
     }
 
-    public LocalDate getDuracion_mov() {
+    public Timestamp getDuracion_mov() {
         return duracion_mov;
     }
 
-    public void setDuracion_mov(LocalDate duracion_mov) {
+    public void setDuracion_mov(Timestamp duracion_mov) {
         this.duracion_mov = duracion_mov;
     }
 
@@ -98,7 +101,7 @@ public class Movimiento {
 
     @Override
     public String toString() {
-        return "Movimiento{" + "id_mov=" + id_mov + ", cantidad_mov=" + cantidad_mov + ", duracion_mov=" + duracion_mov + ", balance_mov=" + balance_mov + ", descripcion_mov=" + descripcion_mov + ", id_cta=" + id_cta + '}';
+        return "Movimiento{" + "id_mov=" + id_mov + ", cantidad_mov=" + cantidad_mov + ", duracion_mov=" + duracion_mov + ", balance_mov=" + balance_mov + ", descripcion_mov=" + descripcion_mov + '}';
     }
       
 }

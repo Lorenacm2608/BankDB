@@ -5,6 +5,8 @@
  */
 package clases;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Fredy Vargas
@@ -12,7 +14,7 @@ package clases;
  * @author Lorena Cáceres
  * @author Moroni
  */
-public class Cliente {
+public class Cliente implements Serializable {
     
     private long id_cli;
     private String nombre_cli;

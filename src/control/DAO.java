@@ -9,12 +9,12 @@ import clases.Cliente;
 import clases.Cuenta;
 import clases.Movimiento;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -59,21 +59,21 @@ public class DAO {
                 PreparedStatement ps;
                 String query;
                 query = "INSERT INTO customer(city,email,firstName,lastName,middleInitial,phone,state,street,zip)VALUES(?,?,?,?,?,?,?,?,?)";
-                openConnection();
+                this.openConnection();
                 try{
                     ps = con.prepareStatement(query);
-                    ps.setString(2,cli.getCiudad());
-                    ps.setString(3, cli.getCorreo_cli());
-                    ps.setString(4, cli.getNombre_cli());
-                    ps.setString(5, cli.getApellido1_cli());
-                    ps.setString(6, cli.getApellido2_cli());
-                    ps.setLong(7, cli.getTelefono_cli());
-                    ps.setString(8, cli.getEstado());
-                    ps.setString(9, cli.getCalle());
-                    ps.setInt(10, cli.getCp());
+                    ps.setString(1,cli.getCiudad());
+                    ps.setString(2, cli.getCorreo_cli());
+                    ps.setString(3, cli.getNombre_cli());
+                    ps.setString(4, cli.getApellido1_cli());
+                    ps.setString(5, cli.getApellido2_cli());
+                    ps.setLong(6, cli.getTelefono_cli());
+                    ps.setString(7, cli.getEstado());
+                    ps.setString(8, cli.getCalle());
+                    ps.setInt(9, cli.getCp());
                     ps.execute();
                     ps.close();
-                    closeConnection();
+                    this.closeConnection();
                 }catch(SQLException e){
                     System.out.println("ERROR");
                 }
@@ -85,7 +85,7 @@ public class DAO {
         public Cliente ConsultaCliente(String nombre, String apel1){
             Cliente cli=null;
             try {
-                openConnection();
+                this.openConnection();
                 stmt = con.createStatement();
                 String query = "SELECT * FROM CUSTOMER WHERE firstName = '" + nombre + "' and lastName = '" + apel1 + "'";
                 ResultSet rs = stmt.executeQuery(query);
@@ -102,7 +102,7 @@ public class DAO {
                     cli.setCalle(rs.getString("street"));
                     cli.setCp(rs.getInt("zip"));
                    rs.close();
-                   closeConnection();
+                   this.closeConnection();
                 }
             } catch (ClassNotFoundException | SQLException ex) {
                  System.out.println("ERROR");
@@ -115,7 +115,7 @@ public class DAO {
             Cuenta cta=null;
             ArrayList <Cuenta> cuentas = new ArrayList <Cuenta>();
             try {
-                openConnection();
+                this.openConnection();
                 stmt = con.createStatement();
                 String query = "SELECT * FROM account a, customer c, customer_account ca where a.id=ca.accounts_id and c.id=ca.customers_id and firstName = '" + nom +"' and lastName = '" + apel1 +"'";
                 ResultSet rs = stmt.executeQuery(query);
@@ -124,13 +124,13 @@ public class DAO {
                     cta.setId_cta(rs.getLong("id"));
                     cta.setBalance_cta(rs.getDouble("balance"));
                     cta.setEquilibrio_cta(rs.getDouble("beginBalance"));
-                    //cta.setDuracion(rs.getDate("beginBalanceTimestamp"));
+                    cta.setDuracion(rs.getTimestamp("beginBalanceTimestamp"));
                     cta.setLinea_cred_cta(rs.getDouble("creditLine"));
                     cta.setDescripcion_cta(rs.getString("description"));
                     cuentas.add(cta);
                 }
                  rs.close();
-                 closeConnection();
+                 this.closeConnection();
             } catch (ClassNotFoundException | SQLException ex) {
                  System.out.println("ERROR");
             }
@@ -143,17 +143,17 @@ public class DAO {
                 PreparedStatement ps;
                 String query;
                 query = "INSERT INTO account(balance,beginBalance,beginBalanceTimestamp,creditLine,description)VALUES(?,?,?,?,?)";
-                openConnection();
+                this.openConnection();
                 try{
                     ps = con.prepareStatement(query);
-                    ps.setDouble(2, cuenta.getBalance_cta());
-                    ps.setDouble(3, cuenta.getEquilibrio_cta());
-                    //ps.setDate(4, cuenta.getDuracion());
-                    ps.setDouble(5, cuenta.getLinea_cred_cta());
-                    ps.setString(6,cuenta.getDescripcion_cta());
+                    ps.setDouble(1, cuenta.getBalance_cta());
+                    ps.setDouble(2, cuenta.getEquilibrio_cta());
+                    ps.setTimestamp(3, cuenta.getDuracion());
+                    ps.setDouble(4, cuenta.getLinea_cred_cta());
+                    ps.setString(5,cuenta.getDescripcion_cta());
                     ps.execute();
                     ps.close();
-                    closeConnection();
+                    this.closeConnection();
                 }catch(SQLException e){
                     System.out.println("ERROR");
                 }
@@ -167,7 +167,7 @@ public class DAO {
         public Cuenta getCuenta(long buscarID){
             Cuenta cta=null;
             try {
-                openConnection();
+                this.openConnection();
                 stmt = con.createStatement();
                 String query = "SELECT * FROM account WHERE id= " + buscarID;
                 ResultSet rs = stmt.executeQuery(query);
@@ -176,12 +176,11 @@ public class DAO {
                     cta.setId_cta(rs.getLong("id"));
                     cta.setBalance_cta(rs.getDouble("balance"));
                     cta.setEquilibrio_cta(rs.getDouble("beginBalance"));
-                    //Timestamp timestamp = Timestamp.valueOf(rs.getDuracion());
-                    //cta.setDuracion(rs.getDate("beginBalanceTimestamp"));
+                    cta.setDuracion(rs.getTimestamp("beginBalanceTimestamp"));
                     cta.setLinea_cred_cta(rs.getDouble("creditLine"));
                     cta.setDescripcion_cta(rs.getString("description"));
                    rs.close();
-                   closeConnection();
+                   this.closeConnection();
                 }
             } catch (ClassNotFoundException | SQLException ex) {
                  System.out.println("ERROR");
@@ -192,18 +191,18 @@ public class DAO {
         public boolean setMovimiento(Cuenta cta, Movimiento mov){
             PreparedStatement ps;
             String query; 
-            query = "INSERT INTO movement(amount,balance,description,timestamp) VALUES(?,?,?,?)";
+            query = "INSERT INTO movement(amount,balance,description,timestamp,account_id) VALUES(?,?,?,?,?)";
             try {
-                openConnection();
+                this.openConnection();
                 ps = con.prepareStatement(query);
-                ps.setDouble(2,mov.getCantidad_mov());
-                ps.setDouble(3, mov.getBalance_mov());
-                ps.setString(4, mov.getDescripcion_mov());
-                Date date = java.sql.Date.valueOf(mov.getDuracion_mov()); //Pasamos el LocalDate a Date
-                ps.setDate(5, date);
+                ps.setDouble(1,mov.getCantidad_mov());
+                ps.setDouble(2, mov.getBalance_mov());
+                ps.setString(3, mov.getDescripcion_mov());
+                ps.setTimestamp(4, mov.getDuracion_mov());
+                ps.setLong(5, cta.getId_cta());
                 ps.execute();
                 ps.close();
-                closeConnection();
+                this.closeConnection();
                 return true;
             } catch (ClassNotFoundException | SQLException ex) {
                 System.out.println("ERROR en abrir la Conexion");
@@ -214,20 +213,20 @@ public class DAO {
         public Cuenta ultimaCuenta(){
             Cuenta cta=null;
             try {
-                openConnection();
+                this.openConnection();
                 stmt = con.createStatement();
-                String query = "SELECT MAX(id) FROM account";
+                String query = "SELECT * FROM account WHERE id IN(SELECT MAX(id) FROM account)";
                 ResultSet rs = stmt.executeQuery(query);
                 if(rs.next()){
                     cta = new Cuenta();
                     cta.setId_cta(rs.getLong("id"));
                     cta.setBalance_cta(rs.getDouble("balance"));
                     cta.setEquilibrio_cta(rs.getDouble("beginBalance"));
-                    //cta.setDuracion(rs.getDate("beginBalanceTimestamp"));
+                    cta.setDuracion(rs.getTimestamp("beginBalanceTimestamp"));
                     cta.setLinea_cred_cta(rs.getDouble("creditLine"));
                     cta.setDescripcion_cta(rs.getString("description"));
                    rs.close();
-                   closeConnection();
+                   this.closeConnection();
                 }
             } catch (ClassNotFoundException | SQLException ex) {
                  System.out.println("ERROR");
@@ -240,13 +239,13 @@ public class DAO {
             String query; 
             query = "INSERT INTO customers_account VALUES (?,?)";
             try {
-                openConnection();
+                this.openConnection();
                 ps = con.prepareStatement(query);
                 ps.setLong(1,wIDcli);
                 ps.setLong(2,wIDcta);
                 ps.execute();
                 ps.close();
-                closeConnection();
+                this.closeConnection();
                 return true;
             } catch (ClassNotFoundException | SQLException ex) {
                 System.out.println("ERROR en abrir la Conexion");
@@ -258,21 +257,19 @@ public class DAO {
             Movimiento m=null;
             ArrayList <Movimiento> mov = new ArrayList();
         try {
-            openConnection();
+            this.openConnection();
             stmt = con.createStatement();
             String query ="select * from movement where movement.account_id =  "+id;
             ResultSet rs = stmt.executeQuery(query);
             while(rs.next()){
                 m = new Movimiento();
-                m.setId_mov(rs.getInt("id"));
                 m.setCantidad_mov(rs.getFloat("amount"));
                 m.setDescripcion_mov(rs.getString("description"));
-                //m.setDuracion_mov(rs.getTimestamp("timestamp"));
-                m.setId_cta(rs.getInt("account_id"));
+                m.setDuracion_mov(rs.getTimestamp("timestamp"));
                 mov.add(m);
             }
             rs.close();
-            closeConnection();
+            this.closeConnection();
         } catch (ClassNotFoundException | SQLException ex) {
             System.out.println("ERROR");
         }
